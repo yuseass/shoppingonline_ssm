@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shxt.modual.address.model.Address">
+	<!-- 添加 -->
+	<insert id="add">
+		INSERT INTO address
+			(a_id,c_id,province,city,street,postcode,name,phone) 
+		VALUES
+			(#{a_id},#{c_id},#{province},#{city},#{street},#{postcode},#{name},#{phone})
+	</insert>
+	
+	<!-- 查询全部 -->
+	<select id="list" resultType="com.shxt.modual.address.model.Address">
+		SELECT a_id,c_id,p1.name AS province,p2.name AS city,street,postcode,address.name,phone FROM address LEFT JOIN place p1 ON p1.p_id=address.province LEFT JOIN place p2 ON p2.p_id=city WHERE c_id =#{c_id} GROUP BY a_id ORDER BY a_id DESC
+	</select>
+	
+	<!-- 查询全部省 -->
+	<select id="provinceList" resultType="com.shxt.modual.address.model.Place">
+		SELECT p_id,NAME FROM place ORDER BY p_id  LIMIT 0,34
+	</select>
+	
+	<!-- 查询全部市 -->
+	<select id="cityList" resultType="com.shxt.modual.address.model.Place">
+		SELECT * FROM place WHERE province = #{province} and province!=0
+	</select>
+	
+	<!-- 获得Id -->
+	<select id="getId" resultType="com.shxt.modual.address.model.Address">
+		SELECT a_id FROM address ORDER BY a_id DESC
+	</select>
+	
+	<!-- 删除 -->
+	<delete id="delete">
+		delete from address WHERE a_id = #{a_id} 
+	</delete>
+
+</mapper>

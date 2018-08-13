@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shxt.modual.index.model.Index">
+
+	
+	<!-- 查询全部 -->
+	<select id="list" resultType="com.shxt.modual.goods.model.Goods">
+		SELECT g_id,goods.s_id,secondclass.name AS s_name,title,brand,model,introduction,photo1,photo2,photo3,stock,selnum,price,promotion FROM goods LEFT JOIN secondclass ON goods.s_id=secondclass.s_id WHERE TYPE = 1
+	</select>
+	
+	<!-- 获得主页布局-->
+	<select id="get" resultType="com.shxt.modual.index.model.Index">
+		SELECT * FROM indexjsp
+	</select>
+	
+	<!-- 获得主页布局-->
+	<select id="getCart" resultType="com.shxt.modual.cart.model.Cart">
+		SELECT * FROM cart where c_id = #{c_id}
+	</select>
+	
+</mapper>

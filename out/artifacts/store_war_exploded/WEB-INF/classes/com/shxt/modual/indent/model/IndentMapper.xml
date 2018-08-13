@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shxt.modual.indent.model.Indent">
+	<!-- 添加-->
+	<insert id="add">
+		INSERT INTO indent
+			(i_id,c_id,a_id,g_id,num,date,evaluation,comment,type) 
+		VALUES
+			(#{i_id},#{c_id},#{a_id},#{g_id},#{num},#{date},0,#{comment},1)
+	</insert>
+	
+	<!-- 查询积分 -->
+	<select id="getSpend" resultType="Integer">
+		SELECT spend FROM customer  WHERE c_id = #{c_id}
+	</select>
+	
+	<!-- 收货-->
+	<update id="shouhuo">
+		UPDATE indent set type = 2 WHERE g_id = #{g_id} and i_id=#{i_id}
+	</update>
+	
+	<!-- 评价-->
+	<update id="pingjia">
+		UPDATE indent set evaluation = #{evaluation},comment = #{comment},type=3 WHERE g_id = #{g_id} and i_id=#{i_id}
+	</update>
+	
+	<!-- 增加积分-->
+	<update id="addSpend">
+		UPDATE customer set spend = #{money}  WHERE c_id = #{c_id}
+	</update>
+	
+	<!-- 查询销量 -->
+	<select id="getSelnum" resultType="Integer">
+		SELECT selnum FROM goods  WHERE g_id = #{g_id}
+	</select>
+	
+	<!-- 增加销量-->
+	<update id="addSelnum">
+		UPDATE goods set selnum = #{num}  WHERE g_id = #{g_id}
+	</update>
+	
+	<!-- 分页查询 -->
+	<select id="paging_count" resultType="Integer">
+		SELECT count(*) FROM indent LEFT JOIN goods ON indent.g_id=goods.g_id  WHERE c_id = #{c_id}
+		 <if test="key!=''">
+				and title like CONCAT('%',#{key},'%') 
+		</if>
+		 <if test="date1!=''">
+				<![CDATA[and date >= #{date1}]]> 
+		</if>
+		 <if test="date2!=''">
+				<![CDATA[and date <= #{date2}]]> 
+		</if>
+	</select>
+	
+	<!-- 分页条件查询 -->
+	<select id="paging" resultType="com.shxt.modual.indent.model.Indent">
+		SELECT i_id,address.name,address.phone,goods.title,goods.photo1,indent.g_id,num,DATE,evaluation,COMMENT,indent.TYPE FROM indent LEFT JOIN goods ON indent.g_id=goods.g_id LEFT JOIN address ON indent.a_id = address.a_id  WHERE indent.c_id = #{c_id}
+		 <if test="key!=''">
+				and title like CONCAT('%',#{key},'%') 
+		</if>
+		 <if test="date1!=''">
+				<![CDATA[and date >= #{date1}]]> 
+		</if>
+		 <if test="date2!=''">
+				<![CDATA[and date <= #{date2}]]> 
+		</if>
+		order by date desc LIMIT #{start},#{size}
+	</select>
+	
+	<!-- 查询全部 -->
+	<select id="list" resultType="com.shxt.modual.indent.model.Indent">
+		SELECT i_id,account,address.name,address.phone,goods.title,goods.photo1,indent.g_id,num,DATE,evaluation,COMMENT,indent.TYPE FROM indent LEFT JOIN goods ON indent.g_id=goods.g_id LEFT JOIN address ON indent.a_id = address.a_id  LEFT JOIN customer ON indent.c_id = customer.c_id  
+
+		order by date desc 
+	</select>
+	
+</mapper>

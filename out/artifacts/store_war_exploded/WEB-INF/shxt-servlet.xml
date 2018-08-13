@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+	
+	<!-- 打开注解方式 -->
+	<mvc:annotation-driven></mvc:annotation-driven>
+	<!-- 指明扫描路径 -->
+	<context:component-scan base-package="com.shxt">
+		<!-- 处理的 -->
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<!-- 不处理的 -->
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+	</context:component-scan>
+	
+	<!-- 排除静态资源 -->
+	<mvc:default-servlet-handler/>
+	
+	<!-- 视图解析器 -->
+	<bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+	    <property name="prefix" value="/WEB-INF/jsp/"/>
+	    <property name="suffix" value=".jsp"/>
+	</bean>
+	
+	<!-- 文件上传   -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8"/> <!-- 默认编码 -->
+		<property name="maxUploadSize" value="1000000000" /> <!-- 文件最大值 -->
+		<property name="maxInMemorySize" value="4096"/>  <!-- 缓存大小 -->
+		<property name="uploadTempDir" value="shxt"/> <!-- 临时文件夹 -->
+	</bean>
+
+</beans>

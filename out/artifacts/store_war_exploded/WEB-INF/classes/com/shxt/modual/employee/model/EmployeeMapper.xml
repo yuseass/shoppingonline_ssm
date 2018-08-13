@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shxt.modual.employee.model.Employee">
+
+    <!-- 登录-->
+    <select id="login" resultType="com.shxt.modual.employee.model.Employee">
+        SELECT * FROM employee WHERE account = #{account} and type !=0
+    </select>
+    
+	<!-- 添加 -->
+	<insert id="add">
+		INSERT INTO employee
+			(e_id,name,account,password,idcard,photo,ren,lei,huo,xin,type) 
+		VALUES
+			(#{e_id},#{name},#{account},#{password},#{idcard},#{photo},#{ren},#{lei},#{huo},#{xin},1)
+	</insert>
+	
+	<!-- 查询全部 -->
+	<select id="list" resultType="com.shxt.modual.employee.model.Employee">
+		SELECT e_id,name,account,idcard,photo,ren,lei,huo,xin FROM employee where type = 1
+	</select>
+	
+	<!-- 判断重复 -->
+	<select id="check" resultType="com.shxt.modual.employee.model.Employee">
+		SELECT account FROM employee where account=#{account}
+	</select>
+	
+	<!-- 查询全部隐藏 -->
+	<select id="hiddenList" resultType="com.shxt.modual.employee.model.Employee">
+		SELECT e_id,name,account,idcard,photo,ren,lei,huo,xin FROM employee where type = 0
+	</select>
+	
+	<!-- 根据主键查询 -->
+	<select id="get" resultType="com.shxt.modual.employee.model.Employee">
+		SELECT e_id,name,account,password,idcard,photo,ren,lei,huo,xin FROM employee WHERE e_id = #{e_id}
+	</select>
+	
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE employee 
+			<set>
+			<if test="photo!=null">
+			photo=#{photo},
+			</if>
+			<if test="password!=null">
+			password=#{password},
+			</if>
+            <if test="idcard!=null">
+			idcard=#{idcard},
+            </if>
+            <if test="ren!=null">
+            ren=#{ren},
+            </if>
+            <if test="lei!=null">
+            lei=#{lei},
+            </if>
+            <if test="huo!=null">
+            huo=#{huo},
+            </if>
+            <if test="xin!=null">
+            xin=#{xin},
+            </if>
+			</set>
+		WHERE e_id = #{e_id}
+	</update>
+	
+	<!-- 隐藏 -->
+	<update id="hide">
+		UPDATE employee set type=0 WHERE e_id = #{e_id} 
+	</update>
+	
+	<!-- 恢复 -->
+	<update id="recover">
+		UPDATE employee set type=1 WHERE e_id = #{e_id} 
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="delete">
+		delete from employee WHERE e_id = #{e_id} 
+	</delete>
+
+</mapper>

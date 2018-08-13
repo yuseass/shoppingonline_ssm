@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+    
+    <context:annotation-config/>
+    <context:component-scan base-package="com.shxt">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    
+    
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/shoppingonline?seUnicode=true&amp;characterEncoding=UTF8"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value=""></property>
+        
+        
+        <!-- 配置初始化大小，最小，最大  -->
+        <property name="initialSize" value="3"></property>
+        <!-- 最大空闲时，当经过一个高峰之后，连接池也可以将一些用不到的链接释放，一直减少到minIdle为止 -->
+        <property name="minIdle" value="5"></property>
+        <!-- 连接池的最大值 -->
+        <property name="maxActive" value="20"></property>
+        <!-- 配置获取链接等待的超时时间 -->
+        <property name="maxWait" value="60000"></property>
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲链接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000"></property>
+        <!-- 配置一个链接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="300000"></property>
+        
+        <property name="validationQuery" value="SELECT 'x'"></property>
+        <property name="testWhileIdle" value="true"></property>
+        <property name="testOnBorrow" value="false"></property>
+        <property name="testOnReturn" value="false"></property>
+        
+    </bean>
+    
+    
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="mapperLocations" value="classpath:com/shxt/**/model/*Mapper.xml"></property>
+        <!-- <property name="configLocation" value="classpath:mybatis-config.xml"></property> -->
+    </bean>
+    
+    <!-- 启动事物的注解方式 -->
+    <tx:annotation-driven/>
+    <!-- 配置事物管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    
+    
+    <!-- 事物管理管理器，作用于哪些方法 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" read-only="true"/> <!-- 先设置所有方法都是只读的 -->
+            
+            <!-- -下面的过滤，会替换掉上面的过滤 -->
+            <tx:method name="*pingjia*" propagation="REQUIRED"/>
+            <tx:method name="*shouhuo*" propagation="REQUIRED"/>
+            <tx:method name="*Update*" propagation="REQUIRED"/>
+            <tx:method name="check*" propagation="REQUIRED"/>
+            <tx:method name="get*" propagation="REQUIRED"/>
+            <tx:method name="hide*" propagation="REQUIRED"/>
+            <tx:method name="recover*" propagation="REQUIRED"/>
+            <tx:method name="add*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="delete*" propagation="REQUIRED"/>
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="edit*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    <!-- 使用aop来完成编程的事物 -->
+    <aop:config>
+        <aop:pointcut expression="execution(* com.shxt..service.*Service.*(..))" id="servicePointCut"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="servicePointCut"/>
+    </aop:config>
+    
+</beans>

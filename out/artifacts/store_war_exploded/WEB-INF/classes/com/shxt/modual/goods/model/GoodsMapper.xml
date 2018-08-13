@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shxt.modual.goods.model.Goods">
+
+	
+	<!-- 查询全部 -->
+	<select id="list" resultType="com.shxt.modual.goods.model.Goods">
+		SELECT g_id,secondclass.name AS s_name,title,brand,model,introduction,photo1,photo2,photo3,stock,selnum,price,promotion FROM goods LEFT JOIN secondclass ON goods.s_id=secondclass.s_id WHERE TYPE = 1 ORDER BY g_id  DESC 
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="paging_count" resultType="Integer">
+		SELECT count(*) FROM goods WHERE TYPE = 1 
+		<if test="key!=null">
+				and( title like CONCAT('%',#{key},'%')  or brand like CONCAT('%',#{key},'%') or model like CONCAT('%',#{key},'%') or introduction like CONCAT('%',#{key},'%') )
+		</if>
+		 <if test="minPrice!=''">
+				<![CDATA[and price >= #{minPrice}]]> 
+		</if>
+		 <if test="maxPrice!=''">
+				<![CDATA[and price <= #{maxPrice}]]> 
+		</if>
+		 <if test="s_id!=0">
+				and goods.s_id =  #{s_id}
+		</if>
+	</select>
+	
+	<!-- 分页条件查询 -->
+	<select id="paging" resultType="com.shxt.modual.goods.model.Goods">
+		SELECT g_id,secondclass.name AS s_name,title,brand,model,introduction,photo1,photo2,photo3,stock,selnum,price,promotion FROM goods LEFT JOIN secondclass ON goods.s_id=secondclass.s_id
+		 WHERE TYPE = 1 
+		 <if test="key!=null">
+				and( title like CONCAT('%',#{key},'%')  or brand like CONCAT('%',#{key},'%') or model like CONCAT('%',#{key},'%') or introduction like CONCAT('%',#{key},'%') )
+		</if>
+		 <if test="minPrice!=''">
+				<![CDATA[and price >= #{minPrice}]]> 
+		</if>
+		 <if test="maxPrice!=''">
+				<![CDATA[and price <= #{maxPrice}]]> 
+		</if>
+		 <if test="s_id!=0">
+				and goods.s_id =  #{s_id}
+		</if>
+		 ORDER BY g_id  DESC  LIMIT #{start},#{size}
+	</select>
+	
+	<!-- 查询一级分类-->
+	<select id="firstClassList" resultType="com.shxt.modual.classes.model.Classes">
+		SELECT f_id,name FROM firstClass
+	</select>
+	
+	<!-- 查询二级分类 -->
+	<select id="secondClassList" resultType="com.shxt.modual.classes.model.Classes">
+		SELECT s_id,name  FROM secondClass  WHERE f_id=#{f_id}
+	</select>
+	
+	<!-- 根据主键查询 -->
+	<select id="get" resultType="com.shxt.modual.goods.model.Goods">
+		SELECT g_id,s_id,title,brand,model,introduction,photo1,photo2,photo3,stock,selnum,price,promotion,type FROM goods WHERE g_id = #{g_id}
+	</select>
+	
+	<!-- 获得主页布局-->
+	<select id="getIndex" resultType="com.shxt.modual.goods.model.Goods">
+		SELECT * FROM index
+	</select>
+    
+    <!-- 查询f_id -->
+    <select id="getF_id" resultType="com.shxt.modual.secondClass.model.SecondClass">
+        SELECT f_id FROM secondclass LEFT JOIN goods ON goods.s_id = secondclass.s_id WHERE g_id=1
+    </select>
+    
+    <!-- 添加 -->
+    <insert id="add">
+        INSERT INTO goods
+            (g_id,s_id,title,brand,model,introduction,photo1,photo2,photo3,stock,selnum,price,promotion,type) 
+        VALUES
+            (#{g_id},#{s_id},#{title},#{brand},#{model},#{introduction},#{photo1},#{photo2},#{photo3},#{stock},0,#{price},#{promotion},#{type})
+    </insert>
+    
+    <!-- 查询最后一条 -->
+    <select id="getId" resultType="com.shxt.modual.goods.model.Goods">
+        SELECT g_id FROM goods GROUP BY g_id  DESC LIMIT 1
+    </select>
+    
+    <!-- 判断重复 -->
+    <select id="check" resultType="com.shxt.modual.goods.model.Goods">
+        SELECT account FROM goods where account=#{account}
+    </select>
+    
+    <!-- 查询全部隐藏 -->
+    <select id="hiddenList" resultType="com.shxt.modual.goods.model.Goods">
+        SELECT g_id,secondclass.name AS s_name,title,brand,model,introduction,photo1,photo2,photo3,stock,selnum,price FROM goods LEFT JOIN secondclass ON goods.s_id=secondclass.s_id WHERE TYPE = 0 GROUP BY g_id  DESC
+    </select>
+    
+    <!-- 修改 -->
+    <update id="update">
+        UPDATE goods 
+            <set>
+            <if test="photo1!=null">
+            photo1=#{photo1},
+            </if>
+            <if test="photo2!=null">
+            photo2=#{photo2},
+            </if>
+            <if test="photo3!=null">
+            photo3=#{photo3},
+            </if>
+            s_id=#{s_id},title=#{title},brand=#{brand},model=#{model},introduction=#{introduction},stock=#{stock},price=#{price},promotion=#{promotion},
+            </set>
+        WHERE g_id = #{g_id}
+    </update>
+    
+    <!-- 隐藏 -->
+    <update id="hide">
+        UPDATE goods set type=0,promotion=0 WHERE g_id = #{g_id} 
+    </update>
+    
+    <!-- 恢复 -->
+    <update id="recover">
+        UPDATE goods set type=1 WHERE g_id = #{g_id} 
+    </update>
+    
+    <!-- 删除 -->
+    <delete id="delete">
+        delete from goods WHERE g_id = #{g_id} 
+    </delete>
+    
+    
+	
+</mapper>

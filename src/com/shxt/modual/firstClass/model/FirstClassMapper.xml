@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shxt.modual.firstClass.model.FirstClass">
+	<!-- 添加 -->
+	<insert id="add">
+		INSERT INTO firstClass
+			(f_id,name) 
+		VALUES
+			(#{f_id},#{name})
+	</insert>
+	
+	<!-- 查询全部 -->
+	<select id="list" resultType="com.shxt.modual.firstClass.model.FirstClass">
+		SELECT f_id,name FROM firstClass ORDER BY f_id DESC 
+	</select>
+	
+	<!-- 判断重复 -->
+	<select id="check" resultType="com.shxt.modual.firstClass.model.FirstClass">
+		SELECT name FROM firstClass where name=#{name}
+	</select>
+	
+	<!-- 根据主键查询 -->
+	<select id="get" resultType="com.shxt.modual.firstClass.model.FirstClass">
+		SELECT f_id,name FROM firstClass WHERE f_id = #{f_id}
+	</select>
+	
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE firstClass set name=#{name} WHERE f_id = #{f_id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="delete">
+		delete from firstClass WHERE f_id = #{f_id} 
+	</delete>
+
+</mapper>

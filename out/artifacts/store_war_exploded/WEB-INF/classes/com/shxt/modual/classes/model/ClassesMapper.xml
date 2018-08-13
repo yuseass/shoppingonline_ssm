@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shxt.modual.classes.model.Classes">
+	
+	<!-- 查询二级 -->
+	<select id="secondClassList" resultType="com.shxt.modual.classes.model.Classes">
+		SELECT s_id,secondclass.name as name,firstclass.name as f_name,secondclass.f_id FROM secondClass LEFT JOIN firstClass ON firstclass.f_id=secondclass.f_id WHERE s_id > 0 ORDER BY s_id DESC 
+	</select>
+	
+	<!-- 查询一级 -->
+	<select id="firstClassList" resultType="com.shxt.modual.classes.model.Classes">
+		SELECT f_id,name FROM firstClass
+	</select>
+	
+
+</mapper>
